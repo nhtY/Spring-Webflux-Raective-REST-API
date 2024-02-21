@@ -18,6 +18,8 @@ public class DataLoader implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
 
+        productRepository.deleteAll().subscribe();
+
         productRepository.count()
                 .subscribe(count -> {
                     if (count == 0) {
