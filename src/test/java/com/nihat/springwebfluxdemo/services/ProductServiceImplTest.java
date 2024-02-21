@@ -78,6 +78,39 @@ class ProductServiceImplTest {
                 .verifyComplete();
     }
 
+    @Test
+    void testUpdate() {
+        Mono<ProductDTO> testMono = productService.getAllProducts().next()
+                .map(productDTO -> {
+                    productDTO.setName("Updated");
+                    return productDTO;
+                });
+
+        // When
+        Mono<ProductDTO> resultMono = testMono
+                .flatMap(dto -> productService.updateProduct(dto.getId(), dto));
+
+        // Then
+        StepVerifier.create(resultMono)
+                .expectNextMatches(dto -> dto.getName().equals("Updated"))
+                .verifyComplete();
+    }
+
+    @Test
+    void testUpdateNotFound() {
+        Mono<ProductDTO> testMono = Mono.just(getTestProductDto());
+
+
+        // When
+        Mono<ProductDTO> resultMono = testMono
+                .flatMap(dto -> productService.updateProduct(dto.getId(), dto));
+
+        // Then
+        StepVerifier.create(resultMono)
+                .expectErrorMessage("Not found")
+                .verify();
+    }
+
     private static ProductDTO getTestProductDto() {
         return ProductDTO.builder()
                 .name("Test Product")
