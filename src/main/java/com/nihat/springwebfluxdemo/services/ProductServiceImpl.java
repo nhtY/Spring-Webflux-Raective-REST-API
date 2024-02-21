@@ -36,7 +36,16 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Mono<ProductDTO> updateProduct(String id, ProductDTO productDTO) {
-        return null;
+        return productRepository.findById(id)
+                .switchIfEmpty(Mono.error(new RuntimeException("Not found")))
+                .map(found -> {
+                    found.setName(productDTO.getName());
+                    found.setDescription(productDTO.getDescription());
+                    found.setImgUrl(productDTO.getImgUrl());
+                    found.setPrice(productDTO.getPrice());
+                    return found;
+                }).flatMap(productRepository::save)
+                .map(productMapper::toProductDTO);
     }
 
     @Override
