@@ -1,5 +1,6 @@
 package com.nihat.springwebfluxdemo.services;
 
+import com.nihat.springwebfluxdemo.domain.Product;
 import com.nihat.springwebfluxdemo.model.ProductDTO;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,6 +64,27 @@ class ProductServiceImplTest {
         StepVerifier.create(resultMono)
                 .expectNextCount(0)
                 .verifyComplete();
+    }
+
+    @Test
+    void testSave() {
+
+        // When
+        Mono<ProductDTO> resultMono = productService.saveProduct(Mono.just(getTestProductDto()));
+
+        // Then
+        StepVerifier.create(resultMono)
+                .expectNextMatches(dto -> dto != null && dto.getId() != null)
+                .verifyComplete();
+    }
+
+    private static ProductDTO getTestProductDto() {
+        return ProductDTO.builder()
+                .name("Test Product")
+                .description("Test description")
+                .imgUrl("https://test.com/testImage.jpeg")
+                .price(BigDecimal.TEN)
+                .build();
     }
 
 }
