@@ -23,7 +23,8 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Mono<ProductDTO> getProductById(String id) {
-        return null;
+        return productRepository.findById(id)
+                .map(productMapper::toProductDTO);
     }
 
     @Override
