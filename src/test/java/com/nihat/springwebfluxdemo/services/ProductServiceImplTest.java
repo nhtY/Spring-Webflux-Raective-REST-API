@@ -5,10 +5,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -28,6 +31,38 @@ class ProductServiceImplTest {
                 .expectNextCount(4) // Assuming we have 4 products in our database
                 .verifyComplete();
 
+    }
+
+    @Test
+    void testFindById() {
+
+        String productId = "65d6028bdd9e7454d348cac2";
+        String expectedProductName = "Iphone 12";
+        BigDecimal expectedPrice = BigDecimal.valueOf(28999.99);
+
+        // When
+        Mono<ProductDTO> resultMono = productService.getProductById(productId);
+
+        // Then
+        StepVerifier.create(resultMono)
+                .expectNextMatches(dto -> dto.getId().equals(productId)
+                        && dto.getName().equals(expectedProductName)
+                        && Objects.equals(dto.getPrice(), expectedPrice))
+                .verifyComplete();
+    }
+
+    @Test
+    void testFindByIdNotFound() {
+
+        String productId = "XX";
+
+        // When
+        Mono<ProductDTO> resultMono = productService.getProductById(productId);
+
+        // Then
+        StepVerifier.create(resultMono)
+                .expectNextCount(0)
+                .verifyComplete();
     }
 
 }
