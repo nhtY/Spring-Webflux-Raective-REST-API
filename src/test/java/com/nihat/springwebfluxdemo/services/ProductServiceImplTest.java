@@ -1,6 +1,5 @@
 package com.nihat.springwebfluxdemo.services;
 
-import com.nihat.springwebfluxdemo.domain.Product;
 import com.nihat.springwebfluxdemo.model.ProductDTO;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,11 +9,7 @@ import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class ProductServiceImplTest {
@@ -104,6 +99,22 @@ class ProductServiceImplTest {
         // When
         Mono<ProductDTO> resultMono = testMono
                 .flatMap(dto -> productService.updateProduct(dto.getId(), dto));
+
+        // Then
+        StepVerifier.create(resultMono)
+                .expectErrorMessage("Not found")
+                .verify();
+    }
+
+    // TODO : write a test that works properly. Following does not work.
+    @Test
+    void testDeleteById() {
+        Mono<ProductDTO> testMono = productService.getAllProducts().next();
+
+        // When
+        testMono.map(dto -> productService.deleteProductById(dto.getId())).block();
+
+        Mono<ProductDTO> resultMono = testMono.flatMap(dto -> productService.getProductById(dto.getId()));
 
         // Then
         StepVerifier.create(resultMono)
