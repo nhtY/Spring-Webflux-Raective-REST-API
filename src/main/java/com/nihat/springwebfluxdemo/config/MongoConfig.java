@@ -2,6 +2,7 @@ package com.nihat.springwebfluxdemo.config;
 
 import com.mongodb.reactivestreams.client.MongoClient;
 import com.mongodb.reactivestreams.client.MongoClients;
+import io.github.cdimascio.dotenv.Dotenv;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,37 +15,23 @@ import org.springframework.data.mongodb.core.ReactiveMongoTemplate;
 public class MongoConfig extends AbstractReactiveMongoConfiguration {
 
     // get the credentials from .env file
-
-    @Value("${DB_USERNAME}")
-    private String username;
-
-    @Value("${DB_PASSWORD}")
-    private String password;
-
-    @Value("${DB_HOST}")
-    private String host;
-
-    @Value("${DB_PORT}")
-    private int port;
-
-    @Value("${DB_NAME}")
-    private String databaseName;
+    private final Dotenv dotenv = Dotenv.configure().load();
 
     // name of the database
     @Override
     protected String getDatabaseName() {
-        return databaseName;
+        return dotenv.get("DB_NAME");
     }
 
     // Database URL
     @Bean
     public MongoClient reactiveMongoClient() {
         return MongoClients.create("mongodb://" +
-                username + ":" +
-                password + "@" +
-                host + ":" +
-                port + "/" +
-                databaseName +
+                dotenv.get("DB_USERNAME") + ":" +
+                dotenv.get("DB_PASSWORD") + "@" +
+                dotenv.get("DB_HOST") + ":" +
+                dotenv.get("DB_PORT") + "/" +
+                dotenv.get("DB_NAME") +
                 "?authSource=admin"); // authSource is the name of the database where the user is defined. Used to check if our user exists.
     }
 
