@@ -98,7 +98,7 @@ class ProductServiceImplTest {
 
         // When
         Mono<ProductDTO> resultMono = testMono
-                .flatMap(dto -> productService.updateProduct(dto.getId(), dto));
+                .flatMap(dto -> productService.updateProduct("XXX", dto));
 
         // Then
         StepVerifier.create(resultMono)
