@@ -17,7 +17,8 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Flux<ProductDTO> getAllProducts() {
-        return null;
+        return productRepository.findAll()
+                .map(productMapper::toProductDTO);
     }
 
     @Override
