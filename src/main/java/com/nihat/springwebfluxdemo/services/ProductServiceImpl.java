@@ -50,6 +50,6 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Mono<Void> deleteProductById(String id) {
-        return null;
+        return productRepository.deleteById(id);
     }
 }
