@@ -29,7 +29,9 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Mono<ProductDTO> saveProduct(Mono<ProductDTO> productDTO) {
-        return null;
+        return productDTO.map(productMapper::toProduct)
+                .flatMap(productRepository::save)
+                .map(productMapper::toProductDTO);
     }
 
     @Override
