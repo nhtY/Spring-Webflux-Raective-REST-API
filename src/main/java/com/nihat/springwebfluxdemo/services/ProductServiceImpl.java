@@ -24,6 +24,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public Mono<ProductDTO> getProductById(String id) {
         return productRepository.findById(id)
+                .switchIfEmpty(Mono.error(new RuntimeException("Not found")))
                 .map(productMapper::toProductDTO);
     }
 
