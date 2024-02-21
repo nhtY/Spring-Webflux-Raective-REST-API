@@ -35,7 +35,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Mono<ProductDTO> updateProduct(String id, Mono<ProductDTO> productDTO) {
+    public Mono<ProductDTO> updateProduct(String id, ProductDTO productDTO) {
         return null;
     }
 
