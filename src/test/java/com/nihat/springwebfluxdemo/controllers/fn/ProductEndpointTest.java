@@ -67,6 +67,51 @@ class ProductEndpointTest {
     }
 
 
+    @Test
+    @Order(4)
+    void testCreateProduct() {
+        // Given
+        ProductDTO newProductDTO = new ProductDTO();
+        newProductDTO.setName("New Product");
+        newProductDTO.setDescription("New Product");
+        newProductDTO.setImgUrl("https://image.com/image.jpeg");
+        newProductDTO.setPrice(BigDecimal.TEN);
+        // Set other fields as needed
+
+        // When
+        webTestClient.post().uri(ProductRouterConfig.PRODUCT_BASE_PATH)
+                .body(Mono.just(newProductDTO), ProductDTO.class)
+                .exchange()
+                // Then
+                .expectStatus().isCreated()
+                .expectHeader().contentType(MediaType.APPLICATION_JSON)
+                .expectBody(ProductDTO.class)
+                .value(created -> {
+                    assertThat(created.getName().equals(newProductDTO.getName()));
+                }); // Define expectedProductDTO based on test data
+    }
+
+    @Test
+    void testCreateProductBadRequest() {
+        // Given
+        ProductDTO invalidProductDTO = new ProductDTO();
+        invalidProductDTO.setName(null); // Set name to null to simulate a bad request
+        invalidProductDTO.setImgUrl("https://image.com/image.jpeg");
+        invalidProductDTO.setDescription("New Product");
+        invalidProductDTO.setPrice(BigDecimal.TEN);
+        // Set other fields as needed
+
+        // When
+        webTestClient.post().uri(ProductRouterConfig.PRODUCT_BASE_PATH)
+                .body(Mono.just(invalidProductDTO), ProductDTO.class)
+                .exchange()
+                // Then
+                .expectStatus().isBadRequest();
+    }
+
+
+
+
     private ProductDTO getSavedTestProduct() {
         return productService.getAllProducts().next().block();
     }
