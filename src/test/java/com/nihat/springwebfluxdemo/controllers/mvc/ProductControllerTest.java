@@ -35,6 +35,34 @@ class ProductControllerTest {
                 .expectBodyList(ProductDTO.class).hasSize(4); // initially loaded + testProduct
     }
 
+    @Test
+    @Order(2)
+    void testGetProductByIdSuccess() {
+        // Given
+        String productId = getSavedTestProduct().getId();
+
+        // When
+        webTestClient.get().uri(ProductController.PRODUCT_ID_URL, productId)
+                .exchange()
+                // Then
+                .expectStatus().isOk()
+                .expectHeader().contentType(MediaType.APPLICATION_JSON)
+                .expectBody(ProductDTO.class);
+    }
+
+    @Test
+    @Order(3)
+    void testGetProductByIdNotFound() {
+        // Given
+        String nonExistentProductId = "non_existent_id";
+
+        // When
+        webTestClient.get().uri(ProductController.PRODUCT_ID_URL, nonExistentProductId)
+                .exchange()
+                // Then
+                .expectStatus().isNotFound();
+    }
+
 
     private ProductDTO getSavedTestProduct() {
         return productService.getAllProducts().next().block();
