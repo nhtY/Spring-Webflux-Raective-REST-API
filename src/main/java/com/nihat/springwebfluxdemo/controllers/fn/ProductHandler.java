@@ -41,7 +41,7 @@ public class ProductHandler {
         return productService.getProductById(request.pathVariable("id"))
                 .flatMap(productDTO -> ServerResponse.ok()
                         .contentType(MediaType.APPLICATION_JSON)
-                        .body(productDTO, ProductDTO.class))
+                        .body(Mono.just(productDTO), ProductDTO.class))
                 .switchIfEmpty(ServerResponse.notFound().build());
     }
 
