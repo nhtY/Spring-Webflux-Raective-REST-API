@@ -106,7 +106,7 @@ class ProductServiceImplTest {
                 .expectErrorMessage("Not found")
                 .verify();
     }
-    
+
     @Test
     void testDeleteById() {
         Mono<ProductDTO> testMono = productService.getAllProducts().next();
@@ -114,7 +114,7 @@ class ProductServiceImplTest {
         // When
         testMono
                 .flatMap(dto -> productService.deleteProductById(dto.getId()))
-                .then().subscribe();
+                .subscribe();
 
         Mono<ProductDTO> resultMono = testMono.flatMap(productDTO -> productService.getProductById(productDTO.getId()));
 
