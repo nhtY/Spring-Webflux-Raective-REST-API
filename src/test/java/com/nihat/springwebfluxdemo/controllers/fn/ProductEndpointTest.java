@@ -87,7 +87,7 @@ class ProductEndpointTest {
                 .expectHeader().contentType(MediaType.APPLICATION_JSON)
                 .expectBody(ProductDTO.class)
                 .value(created -> {
-                    assertThat(created.getName().equals(newProductDTO.getName()));
+                    assertThat(created.getName().equals(newProductDTO.getName())).isTrue();
                 }); // Define expectedProductDTO based on test data
     }
 
@@ -127,7 +127,7 @@ class ProductEndpointTest {
                 .expectHeader().contentType(MediaType.APPLICATION_JSON)
                 .expectBody(ProductDTO.class)
                 .value(dto -> {
-                    assertThat(dto.getName().equals(updatedProductDTO.getName()));
+                    assertThat(dto.getName().equals(updatedProductDTO.getName())).isTrue();
                 });
     }
 
