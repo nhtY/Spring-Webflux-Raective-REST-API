@@ -110,6 +110,47 @@ class ProductControllerTest {
                 .expectStatus().isBadRequest();
     }
 
+    @Test
+    void testUpdateProductSuccess() {
+        // Given
+        ProductDTO updatedProductDTO = getSavedTestProduct();
+        updatedProductDTO.setName("UPDATED name");
+
+        String productId = updatedProductDTO.getId();
+
+
+        // When
+        webTestClient.put().uri(ProductController.PRODUCT_ID_URL, productId)
+                .body(Mono.just(updatedProductDTO), ProductDTO.class)
+                .exchange()
+                // Then
+                .expectStatus().isOk()
+                .expectHeader().contentType(MediaType.APPLICATION_JSON)
+                .expectBody(ProductDTO.class)
+                .value(dto -> {
+                    assertThat(dto.getName().equals(updatedProductDTO.getName())).isTrue();
+                });
+    }
+
+    @Test
+    void testUpdateProductNotFound() {
+        // Given
+        String nonExistentProductId = "non_existent_id";
+        ProductDTO updatedProductDTO = new ProductDTO();
+        updatedProductDTO.setName("Updated Product");
+        updatedProductDTO.setDescription("Updated Product");
+        updatedProductDTO.setImgUrl("https://image.com/image.jpeg");
+        updatedProductDTO.setPrice(BigDecimal.TEN);
+
+
+        // When
+        webTestClient.put().uri(ProductController.PRODUCT_ID_URL, nonExistentProductId)
+                .body(Mono.just(updatedProductDTO), ProductDTO.class)
+                .exchange()
+                // Then
+                .expectStatus().isNotFound();
+    }
+
     private ProductDTO getSavedTestProduct() {
         return productService.getAllProducts().next().block();
     }
