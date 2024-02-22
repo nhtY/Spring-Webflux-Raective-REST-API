@@ -106,19 +106,22 @@ class ProductServiceImplTest {
                 .expectErrorMessage("Not found")
                 .verify();
     }
-
-    // TODO : write a test that works properly. Following seems a bit vague.
+    
     @Test
     void testDeleteById() {
         Mono<ProductDTO> testMono = productService.getAllProducts().next();
 
         // When
-        Mono<Void> deleteResultMono = testMono
-                .flatMap(dto -> productService.deleteProductById(dto.getId())); // After this operation completes, other async operations (like get by id as follows) can be handled.
+        testMono
+                .flatMap(dto -> productService.deleteProductById(dto.getId()))
+                .then().subscribe();
+
+        Mono<ProductDTO> resultMono = testMono.flatMap(productDTO -> productService.getProductById(productDTO.getId()));
 
         // Then
-        StepVerifier.create(deleteResultMono)
-                .verifyComplete();
+        StepVerifier.create(resultMono)
+                .expectErrorMessage("Not found")
+                .verify();
     }
 
     private static ProductDTO getTestProductDto() {
