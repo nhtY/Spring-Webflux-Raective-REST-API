@@ -150,9 +150,21 @@ class ProductEndpointTest {
                 .expectStatus().isNotFound();
     }
 
+    @Test
+    @Order(99)
+    void testDeleteProduct() {
+        // Given
+        String productIdToDelete = "1"; // Existing product ID
+
+        // When
+        webTestClient.delete().uri(ProductRouterConfig.PRODUCT_ID_PATH, productIdToDelete)
+                .exchange()
+                // Then
+                .expectStatus().isNoContent();
+    }
 
 
-        private ProductDTO getSavedTestProduct() {
+    private ProductDTO getSavedTestProduct() {
         return productService.getAllProducts().next().block();
     }
 
