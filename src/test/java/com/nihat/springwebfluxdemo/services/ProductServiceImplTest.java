@@ -58,7 +58,8 @@ class ProductServiceImplTest {
         // Then
         StepVerifier.create(resultMono)
                 .expectNextCount(0)
-                .verifyComplete();
+                .expectErrorMessage("Not found")
+                .verify();
     }
 
     @Test
@@ -106,20 +107,18 @@ class ProductServiceImplTest {
                 .verify();
     }
 
-    // TODO : write a test that works properly. Following does not work.
+    // TODO : write a test that works properly. Following seems a bit vague.
     @Test
     void testDeleteById() {
         Mono<ProductDTO> testMono = productService.getAllProducts().next();
 
         // When
-        testMono.map(dto -> productService.deleteProductById(dto.getId())).block();
-
-        Mono<ProductDTO> resultMono = testMono.flatMap(dto -> productService.getProductById(dto.getId()));
+        Mono<Void> deleteResultMono = testMono
+                .flatMap(dto -> productService.deleteProductById(dto.getId())); // After this operation completes, other async operations (like get by id as follows) can be handled.
 
         // Then
-        StepVerifier.create(resultMono)
-                .expectErrorMessage("Not found")
-                .verify();
+        StepVerifier.create(deleteResultMono)
+                .verifyComplete();
     }
 
     private static ProductDTO getTestProductDto() {
