@@ -12,6 +12,8 @@ import reactor.core.publisher.Mono;
 
 import java.math.BigDecimal;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 @SpringBootTest
 @AutoConfigureWebTestClient
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -22,13 +24,6 @@ class ProductEndpointTest {
 
     @Autowired
     ProductService productService;
-
-    ProductDTO testProduct;
-
-    @BeforeEach
-    void setup() {
-       testProduct = productService.getAllProducts().next().block();
-    }
 
 
     @Test
@@ -47,7 +42,7 @@ class ProductEndpointTest {
     @Order(2)
     void testGetProductByIdSuccess() {
         // Given
-        String productId = testProduct.getId();
+        String productId = getSavedTestProduct().getId();
 
         // When
         webTestClient.get().uri(ProductRouterConfig.PRODUCT_ID_PATH, productId)
@@ -72,26 +67,8 @@ class ProductEndpointTest {
     }
 
 
-
     private ProductDTO getSavedTestProduct() {
-        // Create a new product DTO
-        ProductDTO testProduct = new ProductDTO();
-        testProduct.setName("Test Product");
-        testProduct.setDescription("Test Description");
-        testProduct.setImgUrl("https://test.com/test.png");
-        testProduct.setPrice(BigDecimal.TEN);
-
-        // Save the test product
-        webTestClient.post().uri(ProductRouterConfig.PRODUCT_BASE_PATH)
-                .body(Mono.just(testProduct), ProductDTO.class)
-                .header("Content-Type", "application/json")
-                .exchange()
-                .expectStatus().isCreated();
-
-        // Return the saved product
-        return testProduct;
+        return productService.getAllProducts().next().block();
     }
-
-
 
 }
