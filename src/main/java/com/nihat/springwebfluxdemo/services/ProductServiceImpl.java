@@ -1,5 +1,6 @@
 package com.nihat.springwebfluxdemo.services;
 
+import com.nihat.springwebfluxdemo.exception.NotFoundException;
 import com.nihat.springwebfluxdemo.mappers.ProductMapper;
 import com.nihat.springwebfluxdemo.model.ProductDTO;
 import com.nihat.springwebfluxdemo.repositories.ProductRepository;
@@ -24,7 +25,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public Mono<ProductDTO> getProductById(String id) {
         return productRepository.findById(id)
-                .switchIfEmpty(Mono.error(new RuntimeException("Not found")))
+                .switchIfEmpty(Mono.error(new NotFoundException("Not found")))
                 .map(productMapper::toProductDTO);
     }
 
@@ -38,7 +39,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public Mono<ProductDTO> updateProduct(String id, ProductDTO productDTO) {
         return productRepository.findById(id)
-                .switchIfEmpty(Mono.error(new RuntimeException("Not found")))
+                .switchIfEmpty(Mono.error(new NotFoundException("Not found")))
                 .map(found -> {
                     found.setName(productDTO.getName());
                     found.setDescription(productDTO.getDescription());
