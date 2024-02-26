@@ -8,6 +8,9 @@ A demo project to develop a REST API using **Spring Webflux** and **Spring React
 * **Mongo Express** is used to manage database visually.
 * A ***docker-compose.yml*** file for containerization.
 * Using the command **docker-compose up** will handle creating container from the images.
+* Sensitive data related to database connection is kept in .env file in the original project, but here we have .env.example.
+* ***.env.example*** file is used just to represent how to create a **.env** file for this project. Create a file named .env and put the content similar to the .env.example so that your spring boot application and docker-compose.yml can see those variables.
+
 ---
 
 ## Endpoints
